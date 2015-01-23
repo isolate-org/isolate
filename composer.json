@@ -1,0 +1,43 @@
+{
+    "name": "isolate/isolate",
+    "description": "",
+    "require": {
+        "isolate/unit-of-work": "dev-master",
+        "isolate/lazy-objects": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.4.*",
+        "phpspec/phpspec": "2.1.*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Isolate": "src/",
+            "Isolate\\Tests": "tests/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:isolate-org/unit-of-work.git"
+        },
+        {
+            "type": "vcs",
+            "url":  "git@github.com:isolate-org/lazy-objects.git"
+        }
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Norbert Orzechowicz",
+            "email": "norbert@orzechowicz.pl"
+        }
+    ]
+}
