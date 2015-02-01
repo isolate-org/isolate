@@ -14,7 +14,7 @@ class NewCommandHandlerMock implements  NewCommandHandler
      */
     public function handle(NewCommand $command)
     {
-        $this->persistedObjects[] = $command->getObject();
+        $this->persistedObjects[] = $command->getEntity();
     }
 
     public function objectWasPersisted($object)

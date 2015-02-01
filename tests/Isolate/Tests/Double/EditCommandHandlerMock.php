@@ -16,7 +16,7 @@ class EditCommandHandlerMock implements EditCommandHandler
      */
     public function handle(EditCommand $command)
     {
-        $this->persistedObjects[] = $command->getObject();
+        $this->persistedObjects[] = $command->getEntity();
         $this->persistedObjectsChanges[] = $command->getChanges();
     }
 

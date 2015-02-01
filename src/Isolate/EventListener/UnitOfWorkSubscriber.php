@@ -14,33 +14,33 @@ class UnitOfWorkSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::PRE_REGISTER_OBJECT => 'onObjectRegistration',
-            Events::PRE_GET_OBJECT_STATE => 'onGetObjectState',
-            Events::PRE_REMOVE_OBJECT => 'onObjectRemove',
+            Events::PRE_REGISTER_ENTITY => 'onObjectRegistration',
+            Events::PRE_GET_ENTITY_STATE => 'onGetObjectState',
+            Events::PRE_REMOVE_ENTITY => 'onObjectRemove',
         ];
     }
 
     public function onObjectRegistration(PreRegister $event)
     {
-        $object = $event->getObject();
+        $object = $event->getEntity();
         if ($object instanceof WrappedObject) {
-            $event->replaceObject($object->getWrappedObject());
+            $event->replaceEntity($object->getWrappedObject());
         }
     }
 
     public function onGetObjectState(PreGetState $event)
     {
-        $object = $event->getObject();
+        $object = $event->getEntity();
         if ($object instanceof WrappedObject) {
-            $event->replaceObject($object->getWrappedObject());
+            $event->replaceEntity($object->getWrappedObject());
         }
     }
 
     public function onObjectRemove(PreRemove $event)
     {
-        $object = $event->getObject();
+        $object = $event->getEntity();
         if ($object instanceof WrappedObject) {
-            $event->replaceObject($object->getWrappedObject());
+            $event->replaceEntity($object->getWrappedObject());
         }
     }
 }

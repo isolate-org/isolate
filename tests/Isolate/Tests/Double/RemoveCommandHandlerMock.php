@@ -14,7 +14,7 @@ class RemoveCommandHandlerMock implements RemoveCommandHandler
      */
     public function handle(RemoveCommand $command)
     {
-        $this->removedObjects[] = $command->getObject();
+        $this->removedObjects[] = $command->getEntity();
     }
 
     public function objectWasRemoved($object)

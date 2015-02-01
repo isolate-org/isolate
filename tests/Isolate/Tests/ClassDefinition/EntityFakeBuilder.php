@@ -2,18 +2,24 @@
 
 namespace Isolate\Tests\ClassDefinition;
 
-use Isolate\UnitOfWork\ObjectClass\Definition;
-use Isolate\UnitOfWork\ObjectClass\IdDefinition;
 use Isolate\Tests\Double\EntityFake;
+use Isolate\UnitOfWork\Entity\ClassName;
+use Isolate\UnitOfWork\Entity\Definition;
 
 class EntityFakeBuilder
 {
     public static function buildDefinition()
     {
-        return new Definition(
-            EntityFake::getClassName(),
-            new IdDefinition("id"),
-            ["firstName", "lastName"]
+        $definition = new Definition(
+            new ClassName(EntityFake::getClassName()),
+            new Definition\Identity("id")
         );
+
+        $definition->setObserved([
+            new Definition\Property("firstName"),
+            new Definition\Property("lastName")
+        ]);
+
+        return $definition;
     }
 }

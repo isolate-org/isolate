@@ -1,3 +1,3 @@
 # Isolate
 
-Isolation layer between your domain and infrastructure layer 
+Isolation layer between your domain and infrastructure layer

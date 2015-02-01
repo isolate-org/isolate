@@ -4,10 +4,10 @@ namespace Isolate\Tests;
 
 use Isolate\LazyObjects\Proxy\Adapter\OcramiusProxyManager\Factory;
 use Isolate\LazyObjects\Wrapper;
-use Isolate\UnitOfWork\Change;
-use Isolate\UnitOfWork\ChangeSet;
-use Isolate\UnitOfWork\ObjectClass\Definition;
-use Isolate\UnitOfWork\ObjectInformationPoint;
+use Isolate\UnitOfWork\Entity\Definition;
+use Isolate\UnitOfWork\Entity\InformationPoint;
+use Isolate\UnitOfWork\Entity\Value\Change\ScalarChange;
+use Isolate\UnitOfWork\Entity\Value\ChangeSet;
 use Isolate\UnitOfWork\UnitOfWork;
 use Isolate\EventListener\UnitOfWorkSubscriber;
 use Isolate\Tests\ClassDefinition\EntityFakeBuilder;
@@ -73,8 +73,8 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->getEntityFakeEditCommandHandler()->objectWasEdited($entityProxy->getWrappedObject()));
         $this->assertEquals(
             new ChangeSet([
-                new Change("Norbert", "Dawid", "firstName"),
-                new Change("Orzechowicz", "Sajdak", "lastName")
+                new ScalarChange(new Definition\Property("firstName"), "Norbert", "Dawid"),
+                new ScalarChange(new Definition\Property("lastName"), "Orzechowicz", "Sajdak")
             ]),
             $this->getEntityFakeEditCommandHandler()->getEditedObjectChanges($entityProxy->getWrappedObject())
         );
@@ -97,11 +97,11 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
     private function createUnitOfWork()
     {
         $this->uowEntityFakeDefinition = EntityFakeBuilder::buildDefinition();
-        $this->uowEntityFakeDefinition->addNewCommandHandler(new NewCommandHandlerMock());
-        $this->uowEntityFakeDefinition->addEditCommandHandler(new EditCommandHandlerMock());
-        $this->uowEntityFakeDefinition->addRemoveCommandHandler(new RemoveCommandHandlerMock());
+        $this->uowEntityFakeDefinition->setNewCommandHandler(new NewCommandHandlerMock());
+        $this->uowEntityFakeDefinition->setEditCommandHandler(new EditCommandHandlerMock());
+        $this->uowEntityFakeDefinition->setRemoveCommandHandler(new RemoveCommandHandlerMock());
 
-        return new UnitOfWork(new ObjectInformationPoint([$this->uowEntityFakeDefinition]), $this->eventDispatcher);
+        return new UnitOfWork(new InformationPoint([$this->uowEntityFakeDefinition]), $this->eventDispatcher);
     }
 
     private function createLazyObjectsWrapper()
