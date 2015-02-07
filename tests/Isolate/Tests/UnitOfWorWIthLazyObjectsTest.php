@@ -16,7 +16,7 @@ use Isolate\Tests\Double\EntityFake;
 use Isolate\Tests\Double\NewCommandHandlerMock;
 use Isolate\Tests\Double\RemoveCommandHandlerMock;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Isolate\Tests\ProxyDefinition\EntityFakeBuilder as EntityFakeLazyObjectBuilder;
+use Isolate\Tests\LazyObjects\EntityFakeBuilder as EntityFakeLazyObjectBuilder;
 
 class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
 {
@@ -108,7 +108,7 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
     {
         $entityFakeDefinition = EntityFakeLazyObjectBuilder::buildDefinition();
 
-        return new Wrapper(new Factory(), [$entityFakeDefinition]);
+        return new Wrapper(new Factory(new Factory\LazyObjectsFactory()), [$entityFakeDefinition]);
     }
 
     /**
