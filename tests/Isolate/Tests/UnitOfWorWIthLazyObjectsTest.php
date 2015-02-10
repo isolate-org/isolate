@@ -6,6 +6,8 @@ use Isolate\LazyObjects\Proxy\Adapter\OcramiusProxyManager\Factory;
 use Isolate\LazyObjects\Wrapper;
 use Isolate\UnitOfWork\Entity\Definition;
 use Isolate\UnitOfWork\Entity\InformationPoint;
+use Isolate\UnitOfWork\Entity\IsolateComparer;
+use Isolate\UnitOfWork\Entity\IsolateInformationPoint;
 use Isolate\UnitOfWork\Entity\Value\Change\ScalarChange;
 use Isolate\UnitOfWork\Entity\Value\ChangeSet;
 use Isolate\UnitOfWork\EntityStates;
@@ -59,6 +61,17 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
         $this->uow->commit();
 
         $this->assertTrue($this->getEntityFakeNewCommandHandler()->objectWasPersisted($entityProxy->getWrappedObject()));
+    }
+
+
+    public function test_state_of_registered_lazy_object()
+    {
+        $entity = new EntityFake(null, "Norbert", "Orzechowicz");
+        $entityProxy = $this->wrapper->wrap($entity);
+        $this->uow->register($entityProxy);
+
+        $this->assertSame(EntityStates::NEW_ENTITY, $this->uow->getEntityState($entityProxy));
+        $this->assertSame(EntityStates::NEW_ENTITY, $this->uow->getEntityState($entity));
     }
 
     public function test_persisting_edited_lazy_objects()
@@ -138,7 +151,8 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
 
         return new UnitOfWork(
             new IsolateRegistry(new SnapshotMaker(), new RecoveryPoint()),
-            new InformationPoint([$this->uowEntityFakeDefinition]),
+            new IsolateInformationPoint([$this->uowEntityFakeDefinition]),
+            new IsolateComparer(),
             $this->eventDispatcher
         );
     }
