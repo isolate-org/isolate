@@ -1,0 +1,198 @@
+<?php
+
+namespace Isolate\UnitOfWork\Object;
+
+use Isolate\LazyObjects\Proxy\LazyProperty;
+use Isolate\LazyObjects\WrappedObject;
+
+class IsolateRegistry implements Registry
+{
+    /**
+     * @var SnapshotMaker
+     */
+    private $snapshotMaker;
+
+    /**
+     * @var RecoveryPoint
+     */
+    private $recoveryPoint;
+
+    /**
+     * @var PropertyAccessor
+     */
+    private $propertyAccessor;
+
+    /**
+     * @var array
+     */
+    private $objects;
+
+    /**
+     * @var array
+     */
+    private $snapshots;
+
+    /**
+     * @var array
+     */
+    private $removed;
+
+    /**
+     * @param SnapshotMaker $snapshotMaker
+     * @param RecoveryPoint $recoveryPoint
+     */
+    public function __construct(SnapshotMaker $snapshotMaker, RecoveryPoint $recoveryPoint)
+    {
+        $this->snapshotMaker = $snapshotMaker;
+        $this->recoveryPoint = $recoveryPoint;
+        $this->propertyAccessor = new PropertyAccessor();
+        $this->objects = [];
+        $this->snapshots = [];
+        $this->removed = [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isRegistered($object)
+    {
+        $targetObject = ($object instanceof WrappedObject) ? $object->getWrappedObject() : $object;
+
+        return array_key_exists($this->getId($targetObject), $this->objects);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function register($object)
+    {
+        if ($object instanceof WrappedObject) {
+            $this->setLazyPropertiesCallback($object);
+            $targetObject = $object->getWrappedObject();
+        } else {
+            $targetObject = $object;
+        }
+
+        $this->objects[$this->getId($targetObject)] = $object;
+        $this->snapshots[$this->getId($targetObject)] = $this->snapshotMaker->makeSnapshotOf($targetObject);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSnapshot($object)
+    {
+        $targetObject = ($object instanceof WrappedObject) ? $object->getWrappedObject() : $object;
+
+        return $this->snapshots[$this->getId($targetObject)];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function makeNewSnapshots()
+    {
+        foreach ($this->objects as $id => $object) {
+            $targetObject = ($object instanceof WrappedObject) ? $object->getWrappedObject() : $object;
+
+            $this->snapshots[$id] = $this->snapshotMaker->makeSnapshotOf($targetObject);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isRemoved($object)
+    {
+        $targetObject = ($object instanceof WrappedObject) ? $object->getWrappedObject() : $object;
+
+        return array_key_exists($this->getId($targetObject), $this->removed);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($object)
+    {
+        if (!$this->isRegistered($object)) {
+            $this->register($object);
+        }
+
+        $targetObject = ($object instanceof WrappedObject) ? $object->getWrappedObject() : $object;
+
+        $this->removed[$this->getId($targetObject)] = true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function cleanRemoved()
+    {
+        foreach ($this->removed as $id => $object) {
+            unset($this->snapshots[$id]);
+            unset($this->objects[$id]);
+        }
+
+        $this->removed = [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function all()
+    {
+        $objects = [];
+        foreach ($this->objects as $object) {
+            $objects[] = ($object instanceof WrappedObject) ? $object->getWrappedObject() : $object;
+        }
+
+        return $objects;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reset()
+    {
+        $this->removed = [];
+
+        foreach ($this->snapshots as $id => $objectSnapshot) {
+            if ($this->objects[$id] instanceof WrappedObject) {
+                $this->recoveryPoint->recover($this->objects[$id]->getWrappedObject(), $objectSnapshot);
+            } else {
+                $this->recoveryPoint->recover($this->objects[$id], $objectSnapshot);
+            }
+        }
+    }
+
+    /**
+     * @param WrappedObject $lazyObject
+     */
+    private function setLazyPropertiesCallback(WrappedObject $lazyObject)
+    {
+        foreach ($lazyObject->getLazyProperties() as $lazyProperty) {
+            $lazyProperty->setInitializationCallback($this->createUpdateSnapshotCallback($lazyObject, $lazyProperty));
+        }
+    }
+
+    /**
+     * @param WrappedObject $lazyObject
+     * @return \Closure
+     */
+    private function createUpdateSnapshotCallback(WrappedObject $lazyObject, LazyProperty $lazyProperty)
+    {
+        return function($defaultValue, $newValue, $object) use ($lazyObject, $lazyProperty) {
+            $snapshot = $this->snapshots[$this->getId($lazyObject->getWrappedObject())];
+            $this->propertyAccessor->setValue($snapshot, (string) $lazyProperty->getName(), $newValue);
+        };
+    }
+
+    /**
+     * @param $object
+     * @return string
+     */
+    private function getId($object)
+    {
+        return spl_object_hash($object);
+    }
+}

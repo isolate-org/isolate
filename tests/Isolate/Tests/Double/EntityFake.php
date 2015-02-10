@@ -5,17 +5,24 @@ namespace Isolate\Tests\Double;
 class EntityFake
 {
     /**
-     * @var null
+     * @var string
      */
     private $id;
+
     /**
-     * @var null
+     * @var string
      */
     private $firstName;
+
     /**
-     * @var null
+     * @var string
      */
     private $lastName;
+
+    /**
+     * @var array
+     */
+    private $items;
 
     /**
      * @param null $id
@@ -27,6 +34,7 @@ class EntityFake
         $this->id = $id;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
+        $this->items = [];
     }
 
     /**
@@ -75,6 +83,30 @@ class EntityFake
     public function getFirstName()
     {
         return $this->firstName;
+    }
+
+    /**
+     * @return array
+     */
+    public function getItems()
+    {
+        return $this->items;
+    }
+
+    /**
+     * @param $item
+     */
+    public function addItem($item)
+    {
+        $this->items[] = $item;
+    }
+
+    /**
+     * @param array $items
+     */
+    public function setItems(array $items = [])
+    {
+        $this->items = $items;
     }
 
     public static function getClassName()

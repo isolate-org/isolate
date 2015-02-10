@@ -8,6 +8,10 @@ use Isolate\UnitOfWork\Entity\Definition;
 use Isolate\UnitOfWork\Entity\InformationPoint;
 use Isolate\UnitOfWork\Entity\Value\Change\ScalarChange;
 use Isolate\UnitOfWork\Entity\Value\ChangeSet;
+use Isolate\UnitOfWork\EntityStates;
+use Isolate\UnitOfWork\Object\IsolateRegistry;
+use Isolate\UnitOfWork\Object\RecoveryPoint;
+use Isolate\UnitOfWork\Object\SnapshotMaker\Adapter\DeepCopy\SnapshotMaker;
 use Isolate\UnitOfWork\UnitOfWork;
 use Isolate\EventListener\UnitOfWorkSubscriber;
 use Isolate\Tests\ClassDefinition\EntityFakeBuilder;
@@ -43,10 +47,8 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->eventDispatcher = new EventDispatcher();
-        $this->eventDispatcher->addSubscriber(new UnitOfWorkSubscriber());
         $this->wrapper = $this->createLazyObjectsWrapper();
         $this->uow = $this->createUnitOfWork();
-
     }
 
     public function test_persisting_lazy_objects()
@@ -91,6 +93,39 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->getEntityFakeRemoveCommandHandler()->objectWasRemoved($entityProxy->getWrappedObject()));
     }
 
+    function test_rollback_entity_before_commit()
+    {
+        $lazyItems = ["foo", "bar", "baz"];
+        $this->wrapper = $this->createLazyObjectsWrapper($lazyItems);
+        $entity = new EntityFake(1, "Dawid", "Sajdak");
+        $entityProxy = $this->wrapper->wrap($entity);
+        $this->uow->register($entityProxy);
+
+        $entityProxy->changeFirstName("Norbert");
+        $entityProxy->changeLastName("Orzechowicz");
+
+        $this->uow->rollback();
+
+
+        $this->assertSame("Dawid", $entityProxy->getFirstName());
+        $this->assertSame("Sajdak", $entityProxy->getLastName());
+        $this->assertSame($lazyItems, $entityProxy->getItems());
+    }
+
+    public function test_updating_snapshot_when_property_initialized_to_not_generate_changes_for_lazy_loaded_properties()
+    {
+        $lazyItems = ["foo", "bar", "baz"];
+        $this->wrapper = $this->createLazyObjectsWrapper($lazyItems);
+        $entity = new EntityFake(1, "Norbert", "Orzechowicz");
+        $entityProxy = $this->wrapper->wrap($entity);
+
+        $this->uow->register($entityProxy);
+
+        $this->assertSame($lazyItems, $entityProxy->getItems());
+
+        $this->assertSame($this->uow->getEntityState($entity), EntityStates::PERSISTED_ENTITY);
+    }
+
     /**
      * @return UnitOfWork
      */
@@ -101,12 +136,16 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
         $this->uowEntityFakeDefinition->setEditCommandHandler(new EditCommandHandlerMock());
         $this->uowEntityFakeDefinition->setRemoveCommandHandler(new RemoveCommandHandlerMock());
 
-        return new UnitOfWork(new InformationPoint([$this->uowEntityFakeDefinition]), $this->eventDispatcher);
+        return new UnitOfWork(
+            new IsolateRegistry(new SnapshotMaker(), new RecoveryPoint()),
+            new InformationPoint([$this->uowEntityFakeDefinition]),
+            $this->eventDispatcher
+        );
     }
 
-    private function createLazyObjectsWrapper()
+    private function createLazyObjectsWrapper($itemsInitializerValue = null)
     {
-        $entityFakeDefinition = EntityFakeLazyObjectBuilder::buildDefinition();
+        $entityFakeDefinition = EntityFakeLazyObjectBuilder::buildDefinition($itemsInitializerValue);
 
         return new Wrapper(new Factory(new Factory\LazyObjectsFactory()), [$entityFakeDefinition]);
     }
