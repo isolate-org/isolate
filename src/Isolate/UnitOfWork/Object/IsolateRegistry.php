@@ -182,8 +182,12 @@ class IsolateRegistry implements Registry
     private function createUpdateSnapshotCallback(WrappedObject $lazyObject, LazyProperty $lazyProperty)
     {
         return function($defaultValue, $newValue, $object) use ($lazyObject, $lazyProperty) {
-            $snapshot = $this->snapshots[$this->getId($lazyObject->getWrappedObject())];
+            $snapshot = $this->snapshots[$this->getId($object)];
             $this->propertyAccessor->setValue($snapshot, (string) $lazyProperty->getName(), $newValue);
+
+            // we need to make new snapshot from current snapshot in order to avoid setting reference to same object
+            // on entity and entity snapshot.
+            $this->snapshots[$this->getId($object)] = $this->snapshotMaker->makeSnapshotOf($snapshot);
         };
     }
 
