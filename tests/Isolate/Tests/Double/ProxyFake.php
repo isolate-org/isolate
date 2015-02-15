@@ -3,6 +3,7 @@
 namespace Isolate\Tests\Double;
 
 use Isolate\LazyObjects\Proxy\LazyProperty;
+use Isolate\LazyObjects\Proxy\MethodReplacement;
 use Isolate\LazyObjects\WrappedObject;
 use Isolate\UnitOfWork\Tests\Double\EntityFake;
 
@@ -13,15 +14,21 @@ class ProxyFake extends \Isolate\Tests\Double\EntityFake implements WrappedObjec
      * @var array
      */
     private $properties;
+    /**
+     * @var array|\Isolate\LazyObjects\Proxy\MethodReplacement[]
+     */
+    private $methods;
 
     /**
-     * @param EntityFake $wrappedObject
+     * @param EntityFake|EntityFake $wrappedObject
      * @param array|LazyProperty[] $properties
+     * @param array|MethodReplacement[] $methods
      */
-    public function __construct(\Isolate\Tests\Double\EntityFake $wrappedObject, $properties = [])
+    public function __construct(\Isolate\Tests\Double\EntityFake $wrappedObject, $properties = [], $methods = [])
     {
         $this->wrappedObject = $wrappedObject;
         $this->properties = $properties;
+        $this->methods = $methods;
     }
 
     public function changeLastName($newLastName)
@@ -48,5 +55,13 @@ class ProxyFake extends \Isolate\Tests\Double\EntityFake implements WrappedObjec
     public function getLazyProperties()
     {
         return $this->properties;
+    }
+
+    /**
+     * @return array|MethodReplacement[]
+     */
+    public function getMethodReplacements()
+    {
+        return $this->methods;
     }
 }
