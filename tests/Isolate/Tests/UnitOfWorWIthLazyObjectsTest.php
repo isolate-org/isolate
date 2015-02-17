@@ -4,9 +4,12 @@ namespace Isolate\Tests;
 
 use Isolate\LazyObjects\Proxy\Adapter\OcramiusProxyManager\Factory;
 use Isolate\LazyObjects\Wrapper;
+use Isolate\UnitOfWork\CommandBus\SilentBus;
+use Isolate\UnitOfWork\Entity\ChangeBuilder;
 use Isolate\UnitOfWork\Entity\Definition;
 use Isolate\UnitOfWork\Entity\InformationPoint;
 use Isolate\UnitOfWork\Entity\IsolateComparer;
+use Isolate\UnitOfWork\Entity\IsolateIdentifier;
 use Isolate\UnitOfWork\Entity\IsolateInformationPoint;
 use Isolate\UnitOfWork\Entity\Value\Change\ScalarChange;
 use Isolate\UnitOfWork\Entity\Value\ChangeSet;
@@ -61,17 +64,6 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
         $this->uow->commit();
 
         $this->assertTrue($this->getEntityFakeNewCommandHandler()->objectWasPersisted($entityProxy->getWrappedObject()));
-    }
-
-
-    public function test_state_of_registered_lazy_object()
-    {
-        $entity = new EntityFake(null, "Norbert", "Orzechowicz");
-        $entityProxy = $this->wrapper->wrap($entity);
-        $this->uow->register($entityProxy);
-
-        $this->assertSame(EntityStates::NEW_ENTITY, $this->uow->getEntityState($entityProxy));
-        $this->assertSame(EntityStates::NEW_ENTITY, $this->uow->getEntityState($entity));
     }
 
     public function test_persisting_edited_lazy_objects()
@@ -135,8 +127,6 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
         $this->uow->register($entityProxy);
 
         $this->assertSame($lazyItems, $entityProxy->getItems());
-
-        $this->assertSame($this->uow->getEntityState($entity), EntityStates::PERSISTED_ENTITY);
     }
 
     /**
@@ -149,11 +139,15 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
         $this->uowEntityFakeDefinition->setEditCommandHandler(new EditCommandHandlerMock());
         $this->uowEntityFakeDefinition->setRemoveCommandHandler(new RemoveCommandHandlerMock());
 
+        $definitions = new Definition\Repository\InMemory([$this->uowEntityFakeDefinition]);
+        $identifier = new IsolateIdentifier($definitions);
+
         return new UnitOfWork(
             new IsolateRegistry(new SnapshotMaker(), new RecoveryPoint()),
-            new IsolateInformationPoint([$this->uowEntityFakeDefinition]),
-            new IsolateComparer(),
-            $this->eventDispatcher
+            $identifier,
+            new ChangeBuilder($definitions, $identifier),
+            new IsolateComparer($definitions),
+            new SilentBus($definitions)
         );
     }
 
