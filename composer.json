@@ -2,8 +2,8 @@
     "name": "isolate/isolate",
     "description": "",
     "require": {
-        "isolate/unit-of-work": "dev-master",
-        "isolate/lazy-objects": "dev-master"
+        "isolate/unit-of-work": "1.0.*@dev",
+        "isolate/lazy-objects": "1.0.*@dev"
     },
     "require-dev": {
         "phpunit/phpunit": "4.4.*",
@@ -15,16 +15,6 @@
             "Isolate\\Tests": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url":  "git@github.com:isolate-org/unit-of-work.git"
-        },
-        {
-            "type": "vcs",
-            "url":  "git@github.com:isolate-org/lazy-objects.git"
-        }
-    ],
     "extra": {
         "branch-alias": {
             "dev-master": "1.0-dev"
