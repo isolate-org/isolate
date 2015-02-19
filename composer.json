@@ -1,6 +1,7 @@
 {
     "name": "isolate/isolate",
-    "description": "",
+    "description": "Isolate is a PHP framework that will help you in isolating different layers of your application.",
+    "keywords": ["isolate", "orm", "framework"],
     "require": {
         "isolate/unit-of-work": "1.0.*@dev",
         "isolate/lazy-objects": "1.0.*@dev"
