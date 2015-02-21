@@ -5,6 +5,7 @@ namespace spec\Isolate\UnitOfWork\Object;
 use Isolate\LazyObjects\Proxy\LazyProperty;
 use Isolate\Tests\Double\EntityFake;
 use Isolate\Tests\Double\ProxyFake;
+use Isolate\UnitOfWork\LazyObjects\InitializationCallback;
 use Isolate\UnitOfWork\Object\RecoveryPoint;
 use Isolate\UnitOfWork\Object\SnapshotMaker;
 use PhpSpec\ObjectBehavior;
@@ -43,8 +44,9 @@ class IsolateRegistrySpec extends ObjectBehavior
         $proxy = new ProxyFake($entity, [$lazyProperty->getWrappedObject()]);
 
         $this->register($proxy);
-
-        $lazyProperty->setInitializationCallback(Argument::type('Closure'))->shouldHaveBeenCalled();
+        $lazyProperty->setInitializationCallback(Argument::type('Isolate\UnitOfWork\LazyObjects\InitializationCallback'))
+            ->shouldHaveBeenCalled();
+        
         $this->isRegistered($entity)->shouldReturn(true);
     }
 

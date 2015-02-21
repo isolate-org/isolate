@@ -4,6 +4,7 @@ namespace Isolate\UnitOfWork\Object;
 
 use Isolate\LazyObjects\Proxy\LazyProperty;
 use Isolate\LazyObjects\WrappedObject;
+use Isolate\UnitOfWork\LazyObjects\InitializationCallback;
 
 class IsolateRegistry implements Registry
 {
@@ -67,7 +68,6 @@ class IsolateRegistry implements Registry
     public function register($object)
     {
         if ($object instanceof WrappedObject) {
-            $this->setLazyPropertiesCallback($object);
             $targetObject = $object->getWrappedObject();
         } else {
             $targetObject = $object;
@@ -75,6 +75,10 @@ class IsolateRegistry implements Registry
 
         $this->objects[$this->getId($targetObject)] = $object;
         $this->snapshots[$this->getId($targetObject)] = $this->snapshotMaker->makeSnapshotOf($targetObject);
+
+        if ($object instanceof WrappedObject) {
+            $this->setLazyPropertiesCallback($object);
+        }
     }
 
     /**
@@ -171,24 +175,13 @@ class IsolateRegistry implements Registry
     private function setLazyPropertiesCallback(WrappedObject $lazyObject)
     {
         foreach ($lazyObject->getLazyProperties() as $lazyProperty) {
-            $lazyProperty->setInitializationCallback($this->createUpdateSnapshotCallback($lazyObject, $lazyProperty));
+            $lazyProperty->setInitializationCallback(new InitializationCallback(
+                $this->snapshotMaker,
+                $this->propertyAccessor,
+                $lazyProperty,
+                $this->snapshots[$this->getId($lazyObject->getWrappedObject())]
+            ));
         }
-    }
-
-    /**
-     * @param WrappedObject $lazyObject
-     * @return \Closure
-     */
-    private function createUpdateSnapshotCallback(WrappedObject $lazyObject, LazyProperty $lazyProperty)
-    {
-        return function($defaultValue, $newValue, $object) use ($lazyObject, $lazyProperty) {
-            $snapshot = $this->snapshots[$this->getId($object)];
-            $this->propertyAccessor->setValue($snapshot, (string) $lazyProperty->getName(), $newValue);
-
-            // we need to make new snapshot from current snapshot in order to avoid setting reference to same object
-            // on entity and entity snapshot.
-            $this->snapshots[$this->getId($object)] = $this->snapshotMaker->makeSnapshotOf($snapshot);
-        };
     }
 
     /**
