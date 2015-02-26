@@ -4,7 +4,7 @@
     "keywords": ["isolate", "orm", "framework"],
     "require": {
         "php": ">=5.4.0",
-        "isolate/unit-of-work": "1.0.*@dev",
+        "isolate/unit-of-work": ">1.0.0-alpha@dev",
         "isolate/lazy-objects": "1.0.*@dev"
     },
     "require-dev": {
