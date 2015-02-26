@@ -3,9 +3,9 @@
 namespace Isolate\UnitOfWork\Entity;
 
 use Isolate\LazyObjects\WrappedObject;
-use Isolate\UnitOfWork\Entity\Identifier\Symfony\PropertyAccessorIdentifier;
+use Isolate\UnitOfWork\Entity\Identifier\PropertyValueIdentifier;
 
-class IsolateIdentifier extends PropertyAccessorIdentifier
+class IsolateIdentifier extends PropertyValueIdentifier
 {
     public function isEntity($object)
     {
