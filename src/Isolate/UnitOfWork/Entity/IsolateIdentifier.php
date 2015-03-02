@@ -3,9 +3,10 @@
 namespace Isolate\UnitOfWork\Entity;
 
 use Isolate\LazyObjects\WrappedObject;
+use Isolate\UnitOfWork\Entity\Identifier\EntityIdentifier;
 use Isolate\UnitOfWork\Entity\Identifier\PropertyValueIdentifier;
 
-class IsolateIdentifier extends PropertyValueIdentifier
+class IsolateIdentifier extends EntityIdentifier
 {
     public function isEntity($object)
     {
