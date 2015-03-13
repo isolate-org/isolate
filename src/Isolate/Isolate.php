@@ -6,6 +6,8 @@ use Isolate\PersistenceContext\Factory;
 
 final class Isolate
 {
+    const DEFAULT_CONTEXT = 'isolate';
+
     /**
      * @var Factory
      */
@@ -28,7 +30,7 @@ final class Isolate
      * @param $name
      * @return PersistenceContext
      */
-    public function getContext($name)
+    public function getContext($name = self::DEFAULT_CONTEXT)
     {
         if (!array_key_exists($name, $this->contexts)) {
             $this->contexts[$name] = $this->contextFactory->create($name);
