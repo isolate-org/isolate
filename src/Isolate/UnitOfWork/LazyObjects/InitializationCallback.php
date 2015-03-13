@@ -7,7 +7,7 @@ use Isolate\UnitOfWork\Object\PropertyAccessor;
 use Isolate\LazyObjects\Proxy\LazyProperty\InitializationCallback as BaseCallback;
 use Isolate\UnitOfWork\Object\SnapshotMaker;
 
-final class InitializationCallback implements  BaseCallback
+final class InitializationCallback implements BaseCallback
 {
     /**
      * @var PropertyAccessor
