@@ -66,6 +66,14 @@ final class IsolateContext implements PersistenceContext
     }
 
     /**
+     * @return boolean
+     */
+    public function hasOpenTransaction()
+    {
+        return !is_null($this->transaction);
+    }
+
+    /**
      * @return Transaction
      * @throws NotOpenedTransactionException
      */
