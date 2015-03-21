@@ -14,9 +14,9 @@ class IsolateRegistry implements Registry
     private $snapshotMaker;
 
     /**
-     * @var RecoveryPoint
+     * @var PropertyCloner
      */
-    private $recoveryPoint;
+    private $propertyCloner;
 
     /**
      * @var PropertyAccessor
@@ -40,12 +40,12 @@ class IsolateRegistry implements Registry
 
     /**
      * @param SnapshotMaker $snapshotMaker
-     * @param RecoveryPoint $recoveryPoint
+     * @param PropertyCloner $propertyCloner
      */
-    public function __construct(SnapshotMaker $snapshotMaker, RecoveryPoint $recoveryPoint)
+    public function __construct(SnapshotMaker $snapshotMaker, PropertyCloner $propertyCloner)
     {
         $this->snapshotMaker = $snapshotMaker;
-        $this->recoveryPoint = $recoveryPoint;
+        $this->propertyCloner = $propertyCloner;
         $this->propertyAccessor = new PropertyAccessor();
         $this->objects = [];
         $this->snapshots = [];
@@ -162,9 +162,9 @@ class IsolateRegistry implements Registry
 
         foreach ($this->snapshots as $id => $objectSnapshot) {
             if ($this->objects[$id] instanceof WrappedObject) {
-                $this->recoveryPoint->recover($this->objects[$id]->getWrappedObject(), $objectSnapshot);
+                $this->propertyCloner->cloneProperties($this->objects[$id]->getWrappedObject(), $objectSnapshot);
             } else {
-                $this->recoveryPoint->recover($this->objects[$id], $objectSnapshot);
+                $this->propertyCloner->cloneProperties($this->objects[$id], $objectSnapshot);
             }
         }
     }

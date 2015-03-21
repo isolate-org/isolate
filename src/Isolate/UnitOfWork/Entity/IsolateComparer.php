@@ -6,6 +6,12 @@ use Isolate\LazyObjects\WrappedObject;
 
 class IsolateComparer extends Comparer
 {
+    /**
+     * @param $firstEntity
+     * @param $secondEntity
+     * @return bool
+     * @throws \Isolate\UnitOfWork\Exception\InvalidArgumentException
+     */
     public function areEqual($firstEntity, $secondEntity)
     {
         $firstTarget = ($firstEntity instanceof WrappedObject) ? $firstEntity->getWrappedObject() : $firstEntity;

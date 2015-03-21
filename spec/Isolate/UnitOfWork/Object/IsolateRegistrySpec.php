@@ -6,21 +6,21 @@ use Isolate\LazyObjects\Proxy\LazyProperty;
 use Isolate\Tests\Double\EntityFake;
 use Isolate\Tests\Double\ProxyFake;
 use Isolate\UnitOfWork\LazyObjects\InitializationCallback;
-use Isolate\UnitOfWork\Object\RecoveryPoint;
+use Isolate\UnitOfWork\Object\PropertyCloner;
 use Isolate\UnitOfWork\Object\SnapshotMaker;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class IsolateRegistrySpec extends ObjectBehavior
 {
-    function let(SnapshotMaker $cloner, RecoveryPoint $recoveryPoint)
+    function let(SnapshotMaker $cloner, PropertyCloner $propertyCloner)
     {
         $cloner->makeSnapshotOf(Argument::type('object'))->will(function ($args) {
             $object = $args[0];
             return clone $object;
         });
 
-        $this->beConstructedWith($cloner, $recoveryPoint);
+        $this->beConstructedWith($cloner, $propertyCloner);
     }
 
     function it_knows_when_object_was_not_registered()
@@ -154,11 +154,11 @@ class IsolateRegistrySpec extends ObjectBehavior
         ]);
     }
 
-    function it_resets_objects_to_states_from_snapshots(SnapshotMaker $cloner, RecoveryPoint $recoveryPoint)
+    function it_resets_objects_to_states_from_snapshots(SnapshotMaker $snapshotMaker, PropertyCloner $propertyCloner)
     {
         $object = new EntityFake(1, "Norbert", "Orzechowicz");
         $objectSnapshot = new EntityFake(1, "Norbert", "Orzechowicz");
-        $cloner->makeSnapshotOf($object)->willReturn($objectSnapshot);
+        $snapshotMaker->makeSnapshotOf($object)->willReturn($objectSnapshot);
 
         $this->register($object);
         $object->changeFirstName("Dawid");
@@ -167,16 +167,16 @@ class IsolateRegistrySpec extends ObjectBehavior
         $this->remove($objectToRemove);
         $this->reset();
 
-        $recoveryPoint->recover($object, $objectSnapshot)->shouldHaveBeenCalled();
+        $propertyCloner->cloneProperties($object, $objectSnapshot)->shouldHaveBeenCalled();
         $this->isRemoved($objectToRemove)->shouldReturn(false);
     }
 
-    function it_resets_objects_to_states_from_snapshots_when_registered_as_proxy(SnapshotMaker $cloner, RecoveryPoint $recoveryPoint)
+    function it_resets_objects_to_states_from_snapshots_when_registered_as_proxy(SnapshotMaker $snapshotMaker, PropertyCloner $propertyCloner)
     {
         $object = new EntityFake(1, "Norbert", "Orzechowicz");
         $proxy = new ProxyFake($object);
         $objectSnapshot = new EntityFake(1, "Norbert", "Orzechowicz");
-        $cloner->makeSnapshotOf($object)->willReturn($objectSnapshot);
+        $snapshotMaker->makeSnapshotOf($object)->willReturn($objectSnapshot);
 
         $this->register($proxy);
 
@@ -186,7 +186,7 @@ class IsolateRegistrySpec extends ObjectBehavior
         $this->remove($objectToRemove);
         $this->reset();
 
-        $recoveryPoint->recover($object, $objectSnapshot)->shouldHaveBeenCalled();
+        $propertyCloner->cloneProperties($object, $objectSnapshot)->shouldHaveBeenCalled();
         $this->isRemoved($objectToRemove)->shouldReturn(false);
     }
 
