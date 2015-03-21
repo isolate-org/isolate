@@ -17,6 +17,11 @@ interface PersistenceContext
     public function openTransaction();
 
     /**
+     * @return boolean
+     */
+    public function hasOpenTransaction();
+
+    /**
      * @return Transaction
      */
     public function getTransaction();

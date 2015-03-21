@@ -78,4 +78,14 @@ class IsolateContextSpec extends ObjectBehavior
 
         $this->getTransaction()->shouldReturn($transaction);
     }
+
+    function it_knows_whenever_transaction_is_open_or_not(TransactionFactory $transactionFactory, Transaction $transaction)
+    {
+        $transactionFactory->create(Argument::type('Isolate\UnitOfWork\UnitOfWork'))
+            ->willReturn($transaction);
+
+        $this->hasOpenTransaction()->shouldReturn(false);
+        $this->openTransaction();
+        $this->hasOpenTransaction()->shouldReturn(true);
+    }
 }
