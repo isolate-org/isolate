@@ -15,6 +15,7 @@ use Isolate\UnitOfWork\Entity\Value\Change\ScalarChange;
 use Isolate\UnitOfWork\Entity\Value\ChangeSet;
 use Isolate\UnitOfWork\EntityStates;
 use Isolate\UnitOfWork\Object\IsolateRegistry;
+use Isolate\UnitOfWork\Object\PropertyCloner;
 use Isolate\UnitOfWork\Object\RecoveryPoint;
 use Isolate\UnitOfWork\Object\SnapshotMaker\Adapter\DeepCopy\SnapshotMaker;
 use Isolate\UnitOfWork\UnitOfWork;
@@ -143,7 +144,7 @@ class UnitOfWorWIthLazyObjectsTest extends \PHPUnit_Framework_TestCase
         $identifier = new IsolateIdentifier($definitions);
 
         return new UnitOfWork(
-            new IsolateRegistry(new SnapshotMaker(), new RecoveryPoint()),
+            new IsolateRegistry(new SnapshotMaker(), new PropertyCloner()),
             $identifier,
             new ChangeBuilder($definitions, $identifier),
             new IsolateComparer($definitions),
