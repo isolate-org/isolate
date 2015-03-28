@@ -37,7 +37,7 @@ final class IsolateContext implements PersistenceContext
             throw new NotClosedTransactionException();
         }
 
-        $this->transaction = $this->transactionFactory->create();
+        $this->transaction = $this->transactionFactory->create($this);
 
         return $this->transaction;
     }
