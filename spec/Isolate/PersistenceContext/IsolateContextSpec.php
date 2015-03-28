@@ -6,19 +6,30 @@ use Isolate\Exception\NotClosedTransactionException;
 use Isolate\Exception\NotOpenedTransactionException;
 use Isolate\PersistenceContext\Transaction;
 use Isolate\PersistenceContext\Transaction\Factory as TransactionFactory;
+use Isolate\UnitOfWork\Factory;
+use Isolate\UnitOfWork\UnitOfWork;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class IsolateContextSpec extends ObjectBehavior
 {
-    function let(TransactionFactory $transactionFactory)
+    const NAME = 'context';
+
+    function let(Factory $factory, UnitOfWork $uow, TransactionFactory $transactionFactory)
     {
-        $this->beConstructedWith($transactionFactory);
+        $factory->create()->willReturn($uow);
+
+        $this->beConstructedWith(self::NAME, $factory, $transactionFactory);
+    }
+
+    function it_is_named()
+    {
+        $this->getName()->shouldReturn(self::NAME);
     }
 
     function it_open_transactions(TransactionFactory $transactionFactory, Transaction $transaction)
     {
-        $transactionFactory->create()
+        $transactionFactory->create(Argument::type('Isolate\UnitOfWork\UnitOfWork'))
             ->willReturn($transaction);
 
         $this->openTransaction()->shouldReturn($transaction);
@@ -26,7 +37,7 @@ class IsolateContextSpec extends ObjectBehavior
 
     function it_throws_exception_when_opening_transaction_before_closing_old(TransactionFactory $transactionFactory, Transaction $transaction)
     {
-        $transactionFactory->create()
+        $transactionFactory->create(Argument::type('Isolate\UnitOfWork\UnitOfWork'))
             ->willReturn($transaction);
 
         $this->openTransaction()->shouldReturn($transaction);
@@ -43,7 +54,7 @@ class IsolateContextSpec extends ObjectBehavior
 
     function it_close_opened_transaction(TransactionFactory $transactionFactory, Transaction $transaction)
     {
-        $transactionFactory->create()
+        $transactionFactory->create(Argument::type('Isolate\UnitOfWork\UnitOfWork'))
             ->willReturn($transaction);
 
         $transaction->commit()->shouldBeCalled();
@@ -60,7 +71,7 @@ class IsolateContextSpec extends ObjectBehavior
 
     function it_returns_opened_transaction(TransactionFactory $transactionFactory, Transaction $transaction)
     {
-        $transactionFactory->create()
+        $transactionFactory->create(Argument::type('Isolate\UnitOfWork\UnitOfWork'))
             ->willReturn($transaction);
 
         $this->openTransaction();
@@ -70,7 +81,7 @@ class IsolateContextSpec extends ObjectBehavior
 
     function it_knows_whenever_transaction_is_open_or_not(TransactionFactory $transactionFactory, Transaction $transaction)
     {
-        $transactionFactory->create()
+        $transactionFactory->create(Argument::type('Isolate\UnitOfWork\UnitOfWork'))
             ->willReturn($transaction);
 
         $this->hasOpenTransaction()->shouldReturn(false);

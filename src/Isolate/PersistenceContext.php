@@ -7,6 +7,11 @@ use Isolate\PersistenceContext\Transaction;
 interface PersistenceContext
 {
     /**
+     * @return string
+     */
+    public function getName();
+
+    /**
      * @return Transaction
      */
     public function openTransaction();
