@@ -18,16 +18,14 @@ class IsolateContextSpec extends ObjectBehavior
 
     function it_open_transactions(TransactionFactory $transactionFactory, Transaction $transaction)
     {
-        $transactionFactory->create()
-            ->willReturn($transaction);
+        $transactionFactory->create($this)->willReturn($transaction);
 
         $this->openTransaction()->shouldReturn($transaction);
     }
 
     function it_throws_exception_when_opening_transaction_before_closing_old(TransactionFactory $transactionFactory, Transaction $transaction)
     {
-        $transactionFactory->create()
-            ->willReturn($transaction);
+        $transactionFactory->create($this)->willReturn($transaction);
 
         $this->openTransaction()->shouldReturn($transaction);
 
@@ -43,8 +41,7 @@ class IsolateContextSpec extends ObjectBehavior
 
     function it_close_opened_transaction(TransactionFactory $transactionFactory, Transaction $transaction)
     {
-        $transactionFactory->create()
-            ->willReturn($transaction);
+        $transactionFactory->create($this)->willReturn($transaction);
 
         $transaction->commit()->shouldBeCalled();
         $this->openTransaction();
@@ -60,8 +57,7 @@ class IsolateContextSpec extends ObjectBehavior
 
     function it_returns_opened_transaction(TransactionFactory $transactionFactory, Transaction $transaction)
     {
-        $transactionFactory->create()
-            ->willReturn($transaction);
+        $transactionFactory->create($this)->willReturn($transaction);
 
         $this->openTransaction();
 
@@ -70,8 +66,7 @@ class IsolateContextSpec extends ObjectBehavior
 
     function it_knows_whenever_transaction_is_open_or_not(TransactionFactory $transactionFactory, Transaction $transaction)
     {
-        $transactionFactory->create()
-            ->willReturn($transaction);
+        $transactionFactory->create($this)->willReturn($transaction);
 
         $this->hasOpenTransaction()->shouldReturn(false);
         $this->openTransaction();
