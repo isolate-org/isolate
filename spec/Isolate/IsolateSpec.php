@@ -17,8 +17,8 @@ class IsolateSpec extends ObjectBehavior
 
     function it_creates_context_only_when_it_does_not_exists(Factory $contextFactory, PersistenceContext $context)
     {
-        $contextFactory->create(Argument::type('string'))->willReturn($context);
-        $contextFactory->create(Argument::type('string'))->shouldBecalledTimes(1);
+        $contextFactory->create(Argument::type('Isolate\PersistenceContext\Name'))->willReturn($context);
+        $contextFactory->create(Argument::type('Isolate\PersistenceContext\Name'))->shouldBecalledTimes(1);
 
         $this->getContext('database')->shouldReturnAnInstanceOf('Isolate\PersistenceContext');
         $this->getContext('database')->shouldReturnAnInstanceOf('Isolate\PersistenceContext');

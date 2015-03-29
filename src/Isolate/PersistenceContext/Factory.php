@@ -2,10 +2,13 @@
 
 namespace Isolate\PersistenceContext;
 
-interface Factory 
+use Isolate\PersistenceContext;
+
+interface Factory
 {
     /**
-     * @param string $name
+     * @param Name $name
+     * @return PersistenceContext
      */
-    public function create($name);
+    public function create(Name $name);
 }

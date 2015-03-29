@@ -4,6 +4,7 @@ namespace spec\Isolate\PersistenceContext;
 
 use Isolate\Exception\NotClosedTransactionException;
 use Isolate\Exception\NotOpenedTransactionException;
+use Isolate\PersistenceContext\Name;
 use Isolate\PersistenceContext\Transaction;
 use Isolate\PersistenceContext\Transaction\Factory as TransactionFactory;
 use PhpSpec\ObjectBehavior;
@@ -13,7 +14,7 @@ class IsolateContextSpec extends ObjectBehavior
 {
     function let(TransactionFactory $transactionFactory)
     {
-        $this->beConstructedWith($transactionFactory);
+        $this->beConstructedWith(new Name('isolate'), $transactionFactory);
     }
 
     function it_open_transactions(TransactionFactory $transactionFactory, Transaction $transaction)
