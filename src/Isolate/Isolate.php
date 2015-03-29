@@ -3,6 +3,7 @@
 namespace Isolate;
 
 use Isolate\PersistenceContext\Factory;
+use Isolate\PersistenceContext\Name;
 
 final class Isolate
 {
@@ -33,7 +34,7 @@ final class Isolate
     public function getContext($name = self::DEFAULT_CONTEXT)
     {
         if (!array_key_exists($name, $this->contexts)) {
-            $this->contexts[$name] = $this->contextFactory->create($name);
+            $this->contexts[$name] = $this->contextFactory->create(new Name($name));
         }
 
         return $this->contexts[$name];

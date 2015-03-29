@@ -10,6 +10,11 @@ use Isolate\PersistenceContext\Transaction\Factory as TransactionFactory;
 final class IsolateContext implements PersistenceContext
 {
     /**
+     * @var Name
+     */
+    private $name;
+
+    /**
      * @var TransactionFactory
      */
     private $transactionFactory;
@@ -20,11 +25,21 @@ final class IsolateContext implements PersistenceContext
     private $transaction;
 
     /**
+     * @param Name $name
      * @param TransactionFactory $transactionFactory
      */
-    public function __construct(TransactionFactory $transactionFactory)
+    public function __construct(Name $name, TransactionFactory $transactionFactory)
     {
         $this->transactionFactory = $transactionFactory;
+        $this->name = $name;
+    }
+
+    /**
+     * @return Name
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

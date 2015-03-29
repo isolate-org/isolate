@@ -2,10 +2,16 @@
 
 namespace Isolate;
 
+use Isolate\PersistenceContext\Name;
 use Isolate\PersistenceContext\Transaction;
 
 interface PersistenceContext
 {
+    /**
+     * @return Name
+     */
+    public function getName();
+
     /**
      * @return Transaction
      */
