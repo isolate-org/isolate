@@ -4,6 +4,9 @@ namespace Isolate\PersistenceContext;
 
 use Isolate\Exception\InvalidArgumentException;
 
+/**
+ * @api
+ */
 final class Name
 {
     /**
@@ -24,6 +27,9 @@ final class Name
         $this->name = $name;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->name;
