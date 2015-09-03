@@ -1,20 +1,16 @@
 {
     "name": "isolate/isolate",
-    "description": "Isolate is a PHP framework that will help you in isolating different layers of your application.",
-    "keywords": ["isolate", "orm", "framework"],
+    "description": "Isolate is an abstraction layer for data persistence that introduce contexts and transactions.",
+    "keywords": ["isolate", "orm", "framework", "storage", "data", "odm"],
     "require": {
-        "php": ">=5.4.0",
-        "isolate/unit-of-work": "1.0.*@dev",
-        "isolate/lazy-objects": "1.0.*@dev"
+        "php": ">=5.4.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.4.*",
         "phpspec/phpspec": "2.1.*"
     },
     "autoload": {
         "psr-0": {
-            "Isolate": "src/",
-            "Isolate\\Tests": "tests/"
+            "Isolate": "src/"
         }
     },
     "extra": {
@@ -31,5 +27,8 @@
             "name": "Norbert Orzechowicz",
             "email": "norbert@orzechowicz.pl"
         }
-    ]
+    ],
+    "suggest": {
+        "isolate/framework": "Framework integrate Isolate components like Unit of Work or Lazy Objects with Isolate abstraction layer."
+    }
 }
