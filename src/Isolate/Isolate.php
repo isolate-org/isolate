@@ -5,6 +5,9 @@ namespace Isolate;
 use Isolate\PersistenceContext\Factory;
 use Isolate\PersistenceContext\Name;
 
+/**
+ * @api
+ */
 final class Isolate
 {
     const DEFAULT_CONTEXT = 'isolate';
@@ -18,6 +21,7 @@ final class Isolate
      * @var array|PersistenceContext[]
      */
     private $contexts;
+    
     /**
      * @param Factory $contextFactory
      */
@@ -30,6 +34,8 @@ final class Isolate
     /**
      * @param $name
      * @return PersistenceContext
+     * 
+     * @api
      */
     public function getContext($name = self::DEFAULT_CONTEXT)
     {
