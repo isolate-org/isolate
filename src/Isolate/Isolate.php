@@ -45,4 +45,39 @@ final class Isolate
 
         return $this->contexts[$name];
     }
+
+    /**
+     * @param string $name
+     * @return PersistenceContext\Transaction
+     */
+    public function openTransaction($name = self::DEFAULT_CONTEXT)
+    {
+        return $this->getContext($name)->openTransaction();
+    }
+
+    /**
+     * @param string $name
+     */
+    public function closeTransaction($name = self::DEFAULT_CONTEXT)
+    {
+        $this->getContext($name)->closeTransaction();
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasOpenTransaction($name = self::DEFAULT_CONTEXT)
+    {
+        return $this->getContext($name)->hasOpenTransaction();
+    }
+
+    /**
+     * @param string $name
+     * @return PersistenceContext\Transaction
+     */
+    public function getTransaction($name = self::DEFAULT_CONTEXT)
+    {
+        return $this->getContext($name)->getTransaction();
+    }
 }

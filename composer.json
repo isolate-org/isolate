@@ -1,12 +1,12 @@
 {
     "name": "isolate/isolate",
-    "description": "Isolate is an abstraction layer for data persistence that introduce contexts and transactions.",
+    "description": "Isolate is an abstraction layer for data persistence. Operations related to tracking changes and saving data are done in transactions which makes your code not aware of sotrage type.",
     "keywords": ["isolate", "orm", "framework", "storage", "data", "odm"],
     "require": {
         "php": ">=5.4.0"
     },
     "require-dev": {
-        "phpspec/phpspec": "2.1.*"
+        "phpspec/phpspec": "^2"
     },
     "autoload": {
         "psr-0": {
@@ -29,6 +29,6 @@
         }
     ],
     "suggest": {
-        "isolate/framework": "Framework integrate Isolate components like Unit of Work or Lazy Objects with Isolate abstraction layer."
+        "isolate/framework": "Framework integrate Isolate components. Read more at http://docs.isolate-project.org/en/latest/framework/index.html"
     }
 }
