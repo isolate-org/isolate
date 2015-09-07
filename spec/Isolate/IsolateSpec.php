@@ -18,6 +18,11 @@ class IsolateSpec extends ObjectBehavior
         $this->beConstructedWith($contextFactory);
     }
 
+    function it_is_persistence_context_registry()
+    {
+        $this->shouldImplement("Isolate\\ContextRegistry");
+    }
+    
     function it_creates_context_only_when_it_does_not_exists(Factory $contextFactory, PersistenceContext $context)
     {
         $contextFactory->create(Argument::type('Isolate\PersistenceContext\Name'))->shouldBecalledTimes(1);

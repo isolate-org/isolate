@@ -5,13 +5,8 @@ namespace Isolate;
 use Isolate\PersistenceContext\Factory;
 use Isolate\PersistenceContext\Name;
 
-/**
- * @api
- */
-final class Isolate
+final class Isolate implements ContextRegistry
 {
-    const DEFAULT_CONTEXT = 'isolate';
-
     /**
      * @var Factory
      */
@@ -32,10 +27,7 @@ final class Isolate
     }
 
     /**
-     * @param $name
-     * @return PersistenceContext
-     * 
-     * @api
+     * {inheritdoc}
      */
     public function getContext($name = self::DEFAULT_CONTEXT)
     {
@@ -47,8 +39,7 @@ final class Isolate
     }
 
     /**
-     * @param string $name
-     * @return PersistenceContext\Transaction
+     * {inheritdoc}
      */
     public function openTransaction($name = self::DEFAULT_CONTEXT)
     {
@@ -56,7 +47,7 @@ final class Isolate
     }
 
     /**
-     * @param string $name
+     * {inheritdoc}
      */
     public function closeTransaction($name = self::DEFAULT_CONTEXT)
     {
@@ -64,8 +55,7 @@ final class Isolate
     }
 
     /**
-     * @param string $name
-     * @return bool
+     * {inheritdoc}
      */
     public function hasOpenTransaction($name = self::DEFAULT_CONTEXT)
     {
@@ -73,8 +63,7 @@ final class Isolate
     }
 
     /**
-     * @param string $name
-     * @return PersistenceContext\Transaction
+     * {inheritdoc}
      */
     public function getTransaction($name = self::DEFAULT_CONTEXT)
     {
