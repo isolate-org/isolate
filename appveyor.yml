@@ -14,7 +14,7 @@ install:
   - echo extension=php_curl.dll >> php.ini
   - echo extension_dir=ext >> php.ini
   - SET PATH=C:\tools\php;%PATH%
-  - cd c:\projects\isolate\framework
+  - cd c:\projects\isolate\isolate
   - appveyor DownloadFile https://getcomposer.org/composer.phar
   - php composer.phar update --prefer-source --no-progress --ansi
 
