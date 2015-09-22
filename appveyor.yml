@@ -1,0 +1,23 @@
+build: false
+shallow_clone: true
+platform: x86
+clone_folder: c:\projects\isolate\isolate
+
+init:
+  - SET COMPOSER_NO_INTERACTION=1
+    
+install:
+  - cinst -y php
+  - cd c:\tools\php
+  - copy php.ini-production php.ini
+  - echo date.timezone="UTC" >> php.ini
+  - echo extension=php_curl.dll >> php.ini
+  - echo extension_dir=ext >> php.ini
+  - SET PATH=C:\tools\php;%PATH%
+  - cd c:\projects\isolate\isolate
+  - appveyor DownloadFile https://getcomposer.org/composer.phar
+  - php composer.phar update --prefer-source --no-progress --ansi
+
+test_script:
+  - cd c:\projects\isolate\isolate
+  - bin\phpspec run --format=dot --ansi
