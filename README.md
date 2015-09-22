@@ -1,6 +1,7 @@
 # Isolate
 
 [![Build Status](https://travis-ci.org/isolate-org/isolate.svg?branch=master)](https://travis-ci.org/isolate-org/isolate)
+[![Windows Build status](https://ci.appveyor.com/api/projects/status/7xakomo680t49x16?svg=true)](https://ci.appveyor.com/project/norzechowicz/isolate)
 [![Latest Stable Version](https://poser.pugx.org/isolate/isolate/v/stable.svg)](https://packagist.org/packages/isolate/isolate)
 [![Total Downloads](https://poser.pugx.org/isolate/isolate/downloads.svg)](https://packagist.org/packages/isolate/isolate)
 [![Latest Unstable Version](https://poser.pugx.org/isolate/isolate/v/unstable.svg)](https://packagist.org/packages/isolate/isolate)
